@@ -1,22 +1,23 @@
 # Steps to create a pipeline
 
-## Create a new user "Deploy"
+## Create a new user for Dev
 
 1. Navigate to the **IAM** Console, and then choose **Users** from the navigation pane.
-2. Select **Add User**. Name it `Deploy` and tick on **Programmatic access**. Choose **Next:Permissions**
+2. Select **Add User**. Give it a name and tick on **Programmatic access**. Choose **Next:Permissions**
 3. In the **Set permissions** menu, choose **Attach existing policies directly**. Search for and select the following policies:
 AmazonS3FullAccess, AmazonDynamoDBFullAccess, AWSAppSyncAdministrator, IAMReadOnlyAccess, AmazonCognitoPowerUser, AWSCodePipelineFullAccess.
 4. Choose **Next: tags**, and then **Next: Review**. Review your policies and select **Create user**   
 5. Copy and download the Access Key ID and Secret Access Key. This is the only time you can download it so do not close the screen before downloading! Then select **CLose**
-6. Select **Deploy** then **Add inline policy**
+6. Select your Username then **Add inline policy**
 In the Visual Editor section, click **Choose a service** and search for and select **IAM**. In the **Actions** menu, drop down **Write** and tick on the **CreateRole** box. In the **Actions** menu, drop down **Permissions Management** and tick on the **PutRolePolicy** box.
 3. In the **Resources** menu, select **All resources**
 4. Select **Review policy**. Give it a name **iam_create_role_policy** and select **Create policy.
 
 ## Store secrets in parameter store through CLI
 
-aws ssm put-parameter --name DEV_ACCESS_KEY-ID --value "VALUE" --type SecureString
-aws ssm put-parameter --name DEV_SECRET_ACCESS_KEY --value "VALUE" --type SecureString
+aws ssm put-parameter --name DEV_ACCESS_KEY-ID --value `VALUE` --type SecureString
+
+aws ssm put-parameter --name DEV_SECRET_ACCESS_KEY --value `VALUE` --type SecureString
 
 
 ## Set up
@@ -39,7 +40,7 @@ aws ssm put-parameter --name DEV_SECRET_ACCESS_KEY --value "VALUE" --type Secure
 
 1. Navigate to the **AWS CodePipeline** console, and then choose **Create pipeline**.
 Enter a **Pipeline name**, select **New service role**, and then choose **Next**
-2. Select **AWS CodeCommit** as the **Source provider**, select the name of the repository you created *idmbtdeploy*, and then choose **master** as your **Branch name**.
+2. Select **AWS CodeCommit** as the **Source provider**, select the name of the repository you created, and then choose **master** as your **Branch name**.
 3. Choose **Amazon CloudWatch Events (recommended)** as your detection option, and then choose **Next**.
 4. ### Build stage uses AWS CodeBuild which uses a buildspec file, which is a collection of build commands, variables and related settings, in a YAML file, that CodeBuild uses to run a build.
 For **Build provider**, choose **AWS CodeBuild** and change your region as needed, and then choose **Create project**.
@@ -55,15 +56,15 @@ For **Build provider**, choose **AWS CodeBuild** and change your region as neede
 
 6.  Back in the **CodePipeline** console, choose **Environment variables** then enter the following values:
 Name: AWS_REGION
-Value: eu-west-2
+Value: `your Region`
 Type: Plaintext
 Select **Add Environment variables** then enter the following values:
 Name: DEV_ACCESS_KEY
-Value: Value of AWS_ACCESS_KEY_ID
+Value: `Value of AWS_ACCESS_KEY_ID`
 Type: Parameter
 Select **Add Environment variables** then enter the following values:
 Name: DEV_SECRET_ACCESS_KEY_
-Value: Value of AWS_SECRET_ACCESS_KEY_ID
+Value: `Value of AWS_SECRET_ACCESS_KEY_ID`
 Type: Parameter
 
 7. Choose **Next**, choose **Skip deploy stage**, and then choose **Skip**.
